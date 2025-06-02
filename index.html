@@ -3,516 +3,690 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Profile Picture Maker</title>
+    <title>Character Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Source Code Pro', monospace;
-            background: #000;
-            color: #00ff00;
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            font-size: 8px;
+            line-height: 1.4;
             padding: 20px;
-            line-height: 1.2;
         }
-        
-        .terminal {
-            max-width: 1000px;
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: #000;
-            border: 2px solid #00ff00;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
         }
-        
-        .terminal-header {
-            background: #00ff00;
-            color: #000;
-            padding: 10px 20px;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .terminal-controls {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .control-btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #000;
-        }
-        
-        .terminal-body {
-            padding: 30px;
-        }
-        
-        .ascii-display {
-            background: rgba(0, 255, 0, 0.05);
-            border: 1px solid #00ff00;
-            padding: 40px;
+
+        .header {
             text-align: center;
-            font-size: 16px;
-            line-height: 1.1;
-            margin-bottom: 40px;
-            white-space: pre;
-            font-family: 'Source Code Pro', monospace;
-            min-height: 400px;
+            margin-bottom: 30px;
+            background: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            padding: 25px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #000;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .character-section {
+            background: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            padding: 20px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .character-preview {
+            width: 100%;
+            height: 400px;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3) 0%, transparent 30%),
+                linear-gradient(180deg, #87CEEB 0%, #98D8E8 40%, #654321 100%);
+            border: 2px inset #c0c0c0;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
         }
-        
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+
+        .character-canvas {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
-        
+
+        .character-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .character-layer img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .loading-text {
+            color: #000;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .controls-panel {
+            background: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            padding: 20px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            background: #f0f0f0;
+            border: 2px inset #c0c0c0;
+            overflow: hidden;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .control-header {
+            background: linear-gradient(90deg, #0000ff, #000080);
+            color: white;
+            padding: 8px 12px;
+            font-size: 8px;
+            border-bottom: 1px solid #808080;
+        }
+
+        .control-content {
+            padding: 15px;
+            background: #f0f0f0;
+        }
+
         .control-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px;
-            border: 1px solid #00ff00;
-            background: rgba(0, 255, 0, 0.02);
+            margin-bottom: 10px;
+            gap: 10px;
         }
-        
+
+        .control-row:last-child {
+            margin-bottom: 0;
+        }
+
         .control-label {
-            font-weight: 600;
-            text-transform: uppercase;
-            width: 120px;
-            text-align: left;
+            font-size: 8px;
+            min-width: 70px;
+            color: #000;
         }
-        
-        .control-nav {
+
+        .control-buttons {
             display: flex;
-            align-items: center;
-            gap: 20px;
+            gap: 5px;
+        }
+
+        .control-button {
+            background: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            color: #000;
+            padding: 6px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 6px;
+            cursor: pointer;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            min-width: 30px;
+        }
+
+        .control-button:hover {
+            background: #d0d0d0;
+        }
+
+        .control-button:active {
+            border: 2px inset #c0c0c0;
+        }
+
+        .control-info {
+            font-size: 8px;
+            color: #000;
             flex: 1;
-            justify-content: center;
+            text-align: right;
         }
-        
-        .nav-btn {
-            background: #000;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.2s;
-            min-width: 40px;
-        }
-        
-        .nav-btn:hover {
-            background: #00ff00;
-            color: #000;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-        
-        .nav-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        
-        .current-option {
-            font-weight: 600;
-            min-width: 150px;
-            text-align: center;
-            padding: 8px;
-            border: 1px solid #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-        }
-        
-        .actions {
+
+        .action-buttons {
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
+            gap: 10px;
             justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .action-btn {
-            background: #000;
-            color: #00ff00;
-            border: 2px solid #00ff00;
-            padding: 12px 24px;
-            cursor: pointer;
-            font-family: 'Source Code Pro', monospace;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: all 0.3s;
-        }
-        
-        .action-btn:hover {
-            background: #00ff00;
-            color: #000;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
-            transform: translateY(-2px);
-        }
-        
-        .blink {
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        
-        .terminal-prompt {
-            color: #00ff00;
-            margin-bottom: 20px;
-        }
-        
-        .status {
             margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #00ff00;
-            text-align: center;
-            font-size: 12px;
+        }
+
+        .action-button {
+            background: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            color: #000;
+            padding: 10px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 7px;
+            cursor: pointer;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .action-button:hover {
+            background: #d0d0d0;
+        }
+
+        .action-button:active {
+            border: 2px inset #c0c0c0;
+        }
+
+        .background-upload {
+            width: 100%;
+            padding: 8px;
+            border: 2px inset #c0c0c0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 6px;
+            background: #fff;
+            color: #000;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .upload-label {
+            font-size: 8px;
+            color: #000;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .character-section, .controls-panel {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="terminal">
-        <div class="terminal-header">
-            <span>ASCII PROFILE PICTURE MAKER v3.0</span>
-            <div class="terminal-controls">
-                <div class="control-btn"></div>
-                <div class="control-btn"></div>
-                <div class="control-btn"></div>
-            </div>
+    <div class="container">
+        <div class="header">
+            <h1>Character Builder</h1>
+            <p class="subtitle">Create your perfect character</p>
         </div>
-        
-        <div class="terminal-body">
-            <div class="terminal-prompt">
-                root@pfp-maker:~$ ./generate_avatar.sh<span class="blink">_</span>
+
+        <div class="main-content">
+            <div class="character-section">
+                <div class="character-preview">
+                    <div class="character-canvas" id="characterCanvas">
+                        <div class="loading-text">Build Your Character</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-button" onclick="randomizeCharacter()">
+                        🎲 Random
+                    </button>
+                    <button class="action-button" onclick="resetCharacter()">
+                        🔄 Reset
+                    </button>
+                    <button class="action-button" onclick="downloadCharacter()">
+                        💾 Download
+                    </button>
+                </div>
+
+                <label class="upload-label">Custom Background:</label>
+                <input type="file" class="background-upload" id="backgroundUpload" accept="image/*">
             </div>
-            
-            <div class="ascii-display" id="asciiDisplay"></div>
-            
-            <div class="controls">
-                <div class="control-row">
-                    <div class="control-label">👑 Hat</div>
-                    <div class="control-nav">
-                        <button class="nav-btn" onclick="navigate('hat', -1)">◀</button>
-                        <div class="current-option" id="hatCurrent">None</div>
-                        <button class="nav-btn" onclick="navigate('hat', 1)">▶</button>
+
+            <div class="controls-panel">
+                <div class="control-group">
+                    <div class="control-header">🎭 Character Type</div>
+                    <div class="control-content">
+                        <div class="control-row">
+                            <span class="control-label">Body:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeBodyType('prev')">◀</button>
+                                <button class="control-button" onclick="changeBodyType('next')">▶</button>
+                            </div>
+                            <span class="control-info" id="bodyTypeInfo">Normal</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-label">Skin:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeSkinTone('prev')">◀</button>
+                                <button class="control-button" onclick="changeSkinTone('next')">▶</button>
+                            </div>
+                            <span class="control-info" id="skinToneInfo">Dark</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="control-row">
-                    <div class="control-label">👓 Glasses</div>
-                    <div class="control-nav">
-                        <button class="nav-btn" onclick="navigate('glasses', -1)">◀</button>
-                        <div class="current-option" id="glassesCurrent">None</div>
-                        <button class="nav-btn" onclick="navigate('glasses', 1)">▶</button>
+
+                <div class="control-group">
+                    <div class="control-header">👕 Clothing</div>
+                    <div class="control-content">
+                        <div class="control-row">
+                            <span class="control-label">Outfit:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeAttribute('clothes', 'prev')">◀</button>
+                                <button class="control-button" onclick="changeAttribute('clothes', 'next')">▶</button>
+                            </div>
+                            <span class="control-info" id="clothesInfo">None (0/51)</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="control-row">
-                    <div class="control-label">👀 Eyes</div>
-                    <div class="control-nav">
-                        <button class="nav-btn" onclick="navigate('eyes', -1)">◀</button>
-                        <div class="current-option" id="eyesCurrent">Round</div>
-                        <button class="nav-btn" onclick="navigate('eyes', 1)">▶</button>
+
+                <div class="control-group">
+                    <div class="control-header">😊 Appearance</div>
+                    <div class="control-content">
+                        <div class="control-row">
+                            <span class="control-label">Face:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeAttribute('face', 'prev')">◀</button>
+                                <button class="control-button" onclick="changeAttribute('face', 'next')">▶</button>
+                            </div>
+                            <span class="control-info" id="faceInfo">None (0/18)</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-label">Hair:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeAttribute('hair', 'prev')">◀</button>
+                                <button class="control-button" onclick="changeAttribute('hair', 'next')">▶</button>
+                            </div>
+                            <span class="control-info" id="hairInfo">None (0/29)</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-label">Beard:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeAttribute('facialHair', 'prev')">◀</button>
+                                <button class="control-button" onclick="changeAttribute('facialHair', 'next')">▶</button>
+                            </div>
+                            <span class="control-info" id="facialHairInfo">None (0/0)</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="control-row">
-                    <div class="control-label">😊 Mouth</div>
-                    <div class="control-nav">
-                        <button class="nav-btn" onclick="navigate('mouth', -1)">◀</button>
-                        <div class="current-option" id="mouthCurrent">Smile</div>
-                        <button class="nav-btn" onclick="navigate('mouth', 1)">▶</button>
+
+                <div class="control-group">
+                    <div class="control-header">🕶️ Accessories</div>
+                    <div class="control-content">
+                        <div class="control-row">
+                            <span class="control-label">Glasses:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeAttribute('glasses', 'prev')">◀</button>
+                                <button class="control-button" onclick="changeAttribute('glasses', 'next')">▶</button>
+                            </div>
+                            <span class="control-info" id="glassesInfo">None (0/6)</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-label">Hat:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeAttribute('hats', 'prev')">◀</button>
+                                <button class="control-button" onclick="changeAttribute('hats', 'next')">▶</button>
+                            </div>
+                            <span class="control-info" id="hatsInfo">None (0/38)</span>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-label">Special:</span>
+                            <div class="control-buttons">
+                                <button class="control-button" onclick="changeAttribute('accessories', 'prev')">◀</button>
+                                <button class="control-button" onclick="changeAttribute('accessories', 'next')">▶</button>
+                            </div>
+                            <span class="control-info" id="accessoriesInfo">None (0/1)</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="control-row">
-                    <div class="control-label">👔 Body</div>
-                    <div class="control-nav">
-                        <button class="nav-btn" onclick="navigate('body', -1)">◀</button>
-                        <div class="current-option" id="bodyCurrent">Basic</div>
-                        <button class="nav-btn" onclick="navigate('body', 1)">▶</button>
-                    </div>
-                </div>
-                
-                <div class="control-row">
-                    <div class="control-label">🎨 Accessory</div>
-                    <div class="control-nav">
-                        <button class="nav-btn" onclick="navigate('accessory', -1)">◀</button>
-                        <div class="current-option" id="accessoryCurrent">None</div>
-                        <button class="nav-btn" onclick="navigate('accessory', 1)">▶</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="actions">
-                <button class="action-btn" onclick="randomize()">🎲 Random</button>
-                <button class="action-btn" onclick="copyToClipboard()">📋 Copy</button>
-                <button class="action-btn" onclick="saveAsImage()">💾 Save</button>
-                <button class="action-btn" onclick="reset()">🔄 Reset</button>
-            </div>
-            
-            <div class="status" id="status">
-                System ready. Use arrow buttons to customize your avatar.
             </div>
         </div>
     </div>
 
     <script>
-        const parts = {
-            hat: [
-                { name: 'None', ascii: [] },
-                { name: 'Cap', ascii: ['    ___    ', '   /   \\   ', '  |  ^  |  ', '   \\___/   '] },
-                { name: 'Crown', ascii: ['  /\\_/\\_/\\  ', ' |  ***  | ', '  \\     /  ', '   |___|   '] },
-                { name: 'Top Hat', ascii: ['   [===]   ', '   |   |   ', '   |___|   ', '  /     \\  '] },
-                { name: 'Beanie', ascii: ['  ~~~~~~~  ', ' /~~~~~~~\\ ', '|       |', ' \\     / '] },
-                { name: 'Helmet', ascii: ['  <<<>>>  ', ' <||||||| ', '  \\     / ', '   |___|  '] },
-                { name: 'Cowboy', ascii: [' ~~~~~~~~~ ', '|  \\   /  |', ' \\  \\_/  /', '  \\     / '] },
-                { name: 'Chef', ascii: ['   _____   ', '  |_____| ', '  |     |  ', '   \\___/  '] },
-                { name: 'Beret', ascii: ['    ___   ', '   /   \\  ', '  (  o  ) ', '   \\___/  '] },
-                { name: 'Wizard', ascii: ['     *    ', '    /|\\   ', '   / | \\  ', '  /  |  \\ '] }
-            ],
-            
-            glasses: [
-                { name: 'None', ascii: '' },
-                { name: 'Round', ascii: ' [o-o]' },
-                { name: 'Square', ascii: ' |-o-|' },
-                { name: 'Sunglasses', ascii: ' \\o_o/' },
-                { name: 'Fancy', ascii: ' {o=o}' },
-                { name: 'Monocle', ascii: ' (o) o' },
-                { name: '3D', ascii: ' ]o-o[' },
-                { name: 'Safety', ascii: ' |oOo|' },
-                { name: 'Star', ascii: ' *o-o*' },
-                { name: 'Heart', ascii: ' ♥o-o♥' },
-                { name: 'Cat Eye', ascii: ' /o\\_o\\' },
-                { name: 'Cyber', ascii: ' <o=o>' }
-            ],
-            
-            eyes: [
-                { name: 'Round', ascii: ' o   o ' },
-                { name: 'Happy', ascii: ' ^   ^ ' },
-                { name: 'Sleepy', ascii: ' -   - ' },
-                { name: 'Starry', ascii: ' *   * ' },
-                { name: 'Dizzy', ascii: ' @   @ ' },
-                { name: 'Wink', ascii: ' >   < ' },
-                { name: 'Dead', ascii: ' x   x ' },
-                { name: 'Dollar', ascii: ' $   $ ' },
-                { name: 'Hearts', ascii: ' ♥   ♥ ' },
-                { name: 'Dots', ascii: ' •   • ' },
-                { name: 'Lines', ascii: ' |   | ' },
-                { name: 'Squares', ascii: ' ■   ■ ' },
-                { name: 'Angry', ascii: ' \\   / ' },
-                { name: 'Spiral', ascii: ' @   @ ' },
-                { name: 'Plus', ascii: ' +   + ' }
-            ],
-            
-            mouth: [
-                { name: 'Smile', ascii: '  \\_/' },
-                { name: 'Frown', ascii: '  /‾\\' },
-                { name: 'Surprised', ascii: '   o  ' },
-                { name: 'Wavy', ascii: '   ~  ' },
-                { name: 'Big Smile', ascii: '   D  ' },
-                { name: 'Kiss', ascii: '   3  ' },
-                { name: 'Tongue', ascii: '  :P  ' },
-                { name: 'Vampire', ascii: ' v_v ' },
-                { name: 'Mustache', ascii: ' {o} ' },
-                { name: 'Beard', ascii: ' /‾\\ ' },
-                { name: 'Pipe', ascii: ' -o- ' },
-                { name: 'Straight', ascii: '  ---  ' },
-                { name: 'Grumpy', ascii: '  \\_\\  ' },
-                { name: 'Laughing', ascii: ' \\o/ ' }
-            ],
-            
-            body: [
-                { name: 'Basic', ascii: ['   |   ', '  /|\\  ', '   |   ', '  / \\  '] },
-                { name: 'Suit', ascii: ['  /|\\ ', ' [###] ', '  | |  ', '  | |  '] },
-                { name: 'T-Shirt', ascii: ['  /|\\ ', ' |TTT| ', '  | |  ', '  | |  '] },
-                { name: 'Hoodie', ascii: ['  /|\\ ', ' |HHH| ', '  |_|  ', '  | |  '] },
-                { name: 'Tank Top', ascii: ['   |   ', ' |***| ', '  | |  ', '  | |  '] },
-                { name: 'Dress', ascii: ['  /|\\ ', ' |DDD| ', ' /___\\ ', ' |   | '] },
-                { name: 'Armor', ascii: ['  /|\\ ', ' [AAA] ', '  |_|  ', '  | |  '] },
-                { name: 'Cape', ascii: [' \\\\|// ', '  \\|/  ', '   |   ', '  / \\  '] },
-                { name: 'Overalls', ascii: ['  /|\\ ', ' |OOO| ', '  |_|  ', '  | |  '] },
-                { name: 'Tuxedo', ascii: ['  /|\\ ', ' |@@@| ', '  |_|  ', '  | |  '] }
-            ],
-            
-            accessory: [
-                { name: 'None', ascii: '' },
-                { name: 'Bowtie', ascii: '  <@>  ' },
-                { name: 'Necklace', ascii: '  ooo  ' },
-                { name: 'Scarf', ascii: '  ~~~  ' },
-                { name: 'Badge', ascii: '  [*]  ' },
-                { name: 'Chain', ascii: '  °°°  ' },
-                { name: 'Medal', ascii: '  (*)  ' },
-                { name: 'Flower', ascii: '  @@@  ' },
-                { name: 'Pin', ascii: '   •   ' },
-                { name: 'Collar', ascii: '  ===  ' }
-            ]
+        // Character state with asset counts from your original code
+        const characterState = {
+            bodyType: { current: 'normal', options: ['normal', 'kid', 'women', 'muscle', 'skinny', 'fat'], name: 'Normal' },
+            skinTone: { current: 'body1', options: ['body1', 'body2'], name: 'Dark' },
+            clothes: { current: 0, max: {}, name: 'None' },
+            face: { current: 0, max: {}, name: 'None' },
+            hair: { current: 0, max: {}, name: 'None' },
+            facialHair: { current: 0, max: {}, name: 'None' },
+            glasses: { current: 0, max: {}, name: 'None' },
+            hats: { current: 0, max: {}, name: 'None' },
+            accessories: { current: 0, max: {}, name: 'None' }
         };
-        
-        let currentSelection = {
-            hat: 0,
-            glasses: 0,
-            eyes: 0,
-            mouth: 0,
-            body: 0,
-            accessory: 0
+
+        // Asset counts from your original code
+        const assetCounts = {
+            fat: { clothes: 20, face: 17, hair: 20, facialHair: 11, glasses: 7, hats: 31, accessories: 5 },
+            kid: { clothes: 9, face: 12, hair: 28, facialHair: 0, glasses: 0, hats: 42, accessories: 0 },
+            muscle: { clothes: 26, face: 15, hair: 23, facialHair: 11, glasses: 9, hats: 29, accessories: 3 },
+            normal: { clothes: 51, face: 18, hair: 29, facialHair: 0, glasses: 6, hats: 38, accessories: 1 },
+            skinny: { clothes: 11, face: 18, hair: 29, facialHair: 0, glasses: 0, hats: 38, accessories: 0 },
+            women: { clothes: 21, face: 15, hair: 18, facialHair: 0, glasses: 0, hats: 38, accessories: 0 }
         };
-        
-        function navigate(category, direction) {
-            const max = parts[category].length - 1;
-            currentSelection[category] += direction;
+
+        const optionNames = {
+            bodyType: { normal: 'Normal', kid: 'Kid', women: 'Women', muscle: 'Muscle', skinny: 'Skinny', fat: 'Fat' },
+            skinTone: { body1: 'Dark', body2: 'Light' }
+        };
+
+        const assetPath = './assets/';
+        const loadedImages = {};
+        let customBackground = null;
+
+        function getImagePath(category, itemIndex) {
+            const bodyType = characterState.bodyType.current;
+            const skinTone = characterState.skinTone.current;
             
-            if (currentSelection[category] < 0) {
-                currentSelection[category] = max;
-            } else if (currentSelection[category] > max) {
-                currentSelection[category] = 0;
+            if (category === 'bodyType') {
+                return `${assetPath}${bodyType}/${skinTone}.png`;
+            } else {
+                return `${assetPath}${bodyType}/${category}/${itemIndex}.png`;
+            }
+        }
+
+        function getCurrentMaxForCategory(category) {
+            const bodyType = characterState.bodyType.current;
+            return assetCounts[bodyType][category] || 0;
+        }
+
+        function loadImage(src) {
+            return new Promise((resolve) => {
+                if (loadedImages[src]) {
+                    resolve(loadedImages[src]);
+                    return;
+                }
+                
+                const img = new Image();
+                img.onload = () => {
+                    loadedImages[src] = img;
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    console.warn(`Failed to load: ${src}`);
+                    resolve(null);
+                };
+                img.src = src;
+            });
+        }
+
+        function changeBodyType(direction) {
+            const bodyTypes = characterState.bodyType.options;
+            const currentIndex = bodyTypes.indexOf(characterState.bodyType.current);
+            
+            let newIndex;
+            if (direction === 'next') {
+                newIndex = (currentIndex + 1) % bodyTypes.length;
+            } else {
+                newIndex = currentIndex === 0 ? bodyTypes.length - 1 : currentIndex - 1;
             }
             
-            updateDisplay(category);
-            generateASCII();
+            characterState.bodyType.current = bodyTypes[newIndex];
+            characterState.bodyType.name = optionNames.bodyType[bodyTypes[newIndex]];
+            
+            resetAttributesToBodyType();
+            updateUI();
+            updateCharacterPreview();
         }
-        
-        function updateDisplay(category) {
-            const current = parts[category][currentSelection[category]];
-            document.getElementById(category + 'Current').textContent = current.name;
-        }
-        
-        function generateASCII() {
-            let ascii = '';
+
+        function changeSkinTone(direction) {
+            const skinTones = characterState.skinTone.options;
+            const currentIndex = skinTones.indexOf(characterState.skinTone.current);
             
-            // Build the character from top to bottom
-            const hatLines = currentSelection.hat > 0 ? parts.hat[currentSelection.hat].ascii : [];
-            const glassesLine = currentSelection.glasses > 0 ? parts.glasses[currentSelection.glasses].ascii : '';
-            const eyesLine = parts.eyes[currentSelection.eyes].ascii;
-            const mouthLine = parts.mouth[currentSelection.mouth].ascii;
-            const accessoryLine = currentSelection.accessory > 0 ? parts.accessory[currentSelection.accessory].ascii : '';
-            const bodyLines = parts.body[currentSelection.body].ascii;
-            
-            // Hat
-            hatLines.forEach(line => {
-                ascii += line + '\n';
-            });
-            
-            // Head outline start
-            ascii += '  ┌─────┐  \n';
-            
-            // Glasses (if any)
-            if (glassesLine) {
-                ascii += ' │' + glassesLine + '│ \n';
+            let newIndex;
+            if (direction === 'next') {
+                newIndex = (currentIndex + 1) % skinTones.length;
+            } else {
+                newIndex = currentIndex === 0 ? skinTones.length - 1 : currentIndex - 1;
             }
             
-            // Eyes
-            ascii += ' │' + eyesLine + '│ \n';
+            characterState.skinTone.current = skinTones[newIndex];
+            characterState.skinTone.name = optionNames.skinTone[skinTones[newIndex]];
             
-            // Mouth
-            ascii += ' │' + mouthLine + '│ \n';
+            updateUI();
+            updateCharacterPreview();
+        }
+
+        function changeAttribute(attribute, direction) {
+            const maxCount = getCurrentMaxForCategory(attribute);
+            const attr = characterState[attribute];
             
-            // Head outline end
-            ascii += '  └─────┘  \n';
-            
-            // Accessory (neck area)
-            if (accessoryLine) {
-                ascii += accessoryLine + '\n';
+            if (direction === 'next') {
+                attr.current = attr.current >= maxCount ? 0 : attr.current + 1;
+            } else {
+                attr.current = attr.current <= 0 ? maxCount : attr.current - 1;
             }
             
-            // Body
-            bodyLines.forEach(line => {
-                ascii += line + '\n';
+            attr.name = attr.current === 0 ? 'None' : `${attribute} ${attr.current}`;
+            
+            updateUI();
+            updateCharacterPreview();
+        }
+
+        function resetAttributesToBodyType() {
+            const bodyType = characterState.bodyType.current;
+            const counts = assetCounts[bodyType];
+            
+            Object.keys(counts).forEach(attr => {
+                if (characterState[attr]) {
+                    characterState[attr].current = 0;
+                    characterState[attr].max = counts[attr];
+                    characterState[attr].name = 'None';
+                }
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('bodyTypeInfo').textContent = characterState.bodyType.name;
+            document.getElementById('skinToneInfo').textContent = characterState.skinTone.name;
+            
+            const bodyType = characterState.bodyType.current;
+            const counts = assetCounts[bodyType];
+            
+            Object.keys(counts).forEach(attr => {
+                const element = document.getElementById(attr + 'Info');
+                if (element && characterState[attr]) {
+                    const state = characterState[attr];
+                    const maxCount = counts[attr];
+                    element.textContent = `${state.name} (${state.current}/${maxCount})`;
+                }
+            });
+        }
+
+        function updateCharacterPreview() {
+            const canvas = document.getElementById('characterCanvas');
+            canvas.innerHTML = '<div class="loading-text">Building Character...</div>';
+            
+            const layerOrder = [
+                { category: 'bodyType', value: 1 },
+                { category: 'clothes', value: characterState.clothes.current },
+                { category: 'face', value: characterState.face.current },
+                { category: 'hair', value: characterState.hair.current },
+                { category: 'facialHair', value: characterState.facialHair.current },
+                { category: 'glasses', value: characterState.glasses.current },
+                { category: 'hats', value: characterState.hats.current },
+                { category: 'accessories', value: characterState.accessories.current }
+            ];
+            
+            canvas.innerHTML = '';
+            
+            // Set custom background if uploaded
+            if (customBackground) {
+                canvas.style.backgroundImage = `url(${customBackground})`;
+                canvas.style.backgroundSize = 'cover';
+                canvas.style.backgroundPosition = 'center';
+                canvas.style.backgroundRepeat = 'no-repeat';
+            } else {
+                canvas.style.backgroundImage = 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3) 0%, transparent 30%), linear-gradient(180deg, #87CEEB 0%, #98D8E8 40%, #654321 100%)';
+                canvas.style.backgroundSize = 'auto';
+            }
+            
+            let loadedCount = 0;
+            const validLayers = layerOrder.filter(layer => layer.value > 0 || layer.category === 'bodyType');
+            
+            if (validLayers.length === 0) {
+                canvas.innerHTML = '<div class="loading-text">Choose Your Style</div>';
+                return;
+            }
+            
+            validLayers.forEach((layer, index) => {
+                const imagePath = getImagePath(layer.category, layer.value);
+                
+                loadImage(imagePath).then(img => {
+                    if (img) {
+                        const layerDiv = document.createElement('div');
+                        layerDiv.className = 'character-layer';
+                        layerDiv.style.zIndex = index + 1;
+                        
+                        const imgElement = document.createElement('img');
+                        imgElement.src = img.src;
+                        imgElement.alt = `${layer.category}`;
+                        
+                        layerDiv.appendChild(imgElement);
+                        canvas.appendChild(layerDiv);
+                    }
+                    
+                    loadedCount++;
+                    if (loadedCount === validLayers.length && canvas.children.length === 0) {
+                        canvas.innerHTML = '<div class="loading-text">Assets Missing</div>';
+                    }
+                });
+            });
+        }
+
+        function randomizeCharacter() {
+            const bodyType = characterState.bodyType.current;
+            const counts = assetCounts[bodyType];
+            
+            Object.keys(counts).forEach(attr => {
+                if (characterState[attr]) {
+                    const maxCount = counts[attr];
+                    const randomValue = Math.floor(Math.random() * (maxCount + 1));
+                    characterState[attr].current = randomValue;
+                    characterState[attr].name = randomValue === 0 ? 'None' : `${attr} ${randomValue}`;
+                }
             });
             
-            document.getElementById('asciiDisplay').textContent = ascii;
+            updateUI();
+            updateCharacterPreview();
         }
-        
-        function randomize() {
-            Object.keys(parts).forEach(category => {
-                const randomIndex = Math.floor(Math.random() * parts[category].length);
-                currentSelection[category] = randomIndex;
-                updateDisplay(category);
-            });
-            generateASCII();
-            updateStatus('Randomized! Your new avatar is ready.');
+
+        function resetCharacter() {
+            resetAttributesToBodyType();
+            updateUI();
+            updateCharacterPreview();
         }
-        
-        function copyToClipboard() {
-            const ascii = document.getElementById('asciiDisplay').textContent;
-            navigator.clipboard.writeText(ascii).then(() => {
-                updateStatus('ASCII copied to clipboard!');
-            }).catch(() => {
-                updateStatus('Failed to copy to clipboard.');
-            });
-        }
-        
-        function saveAsImage() {
-            const ascii = document.getElementById('asciiDisplay').textContent;
+
+        async function downloadCharacter() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
+            canvas.width = 300;
+            canvas.height = 300;
             
-            canvas.width = 600;
-            canvas.height = 700;
+            // Draw custom background if exists
+            if (customBackground) {
+                const bgImg = new Image();
+                bgImg.src = customBackground;
+                await new Promise(resolve => {
+                    bgImg.onload = resolve;
+                    bgImg.onerror = resolve;
+                });
+                if (bgImg.complete && bgImg.naturalWidth > 0) {
+                    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                }
+            }
             
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const layerOrder = [
+                { category: 'bodyType', value: 1 },
+                { category: 'clothes', value: characterState.clothes.current },
+                { category: 'face', value: characterState.face.current },
+                { category: 'hair', value: characterState.hair.current },
+                { category: 'facialHair', value: characterState.facialHair.current },
+                { category: 'glasses', value: characterState.glasses.current },
+                { category: 'hats', value: characterState.hats.current },
+                { category: 'accessories', value: characterState.accessories.current }
+            ];
             
-            ctx.fillStyle = '#00ff00';
-            ctx.font = '14px Source Code Pro, monospace';
+            // Draw each layer
+            for (const layer of layerOrder) {
+                if (layer.value > 0 || layer.category === 'bodyType') {
+                    const imagePath = getImagePath(layer.category, layer.value);
+                    const img = await loadImage(imagePath);
+                    
+                    if (img) {
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    }
+                }
+            }
             
-            const lines = ascii.split('\n');
-            lines.forEach((line, index) => {
-                ctx.fillText(line, 50, 50 + (index * 18));
-            });
-            
+            // Download the image
             const link = document.createElement('a');
-            link.download = 'ascii-avatar.png';
+            link.download = 'character.png';
             link.href = canvas.toDataURL();
             link.click();
-            
-            updateStatus('Avatar saved as image!');
         }
-        
-        function reset() {
-            currentSelection = {
-                hat: 0,
-                glasses: 0,
-                eyes: 0,
-                mouth: 0,
-                body: 0,
-                accessory: 0
-            };
-            
-            Object.keys(parts).forEach(category => {
-                updateDisplay(category);
-            });
-            
-            generateASCII();
-            updateStatus('Reset complete. Ready for new avatar.');
-        }
-        
-        function updateStatus(message) {
-            document.getElementById('status').textContent = message;
-        }
-        
-        // Initialize
-        Object.keys(parts).forEach(category => {
-            updateDisplay(category);
+
+        // Background upload handler
+        document.getElementById('backgroundUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    customBackground = e.target.result;
+                    updateCharacterPreview();
+                };
+                reader.readAsDataURL(file);
+            }
         });
-        generateASCII();
-        updateStatus('Avatar maker loaded. Use arrow buttons to customize!');
+
+        // Initialize on page load
+        resetAttributesToBodyType();
+        updateUI();
+        updateCharacterPreview();
     </script>
 </body>
 </html>
