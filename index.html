@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII NFT Generator v2.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Code Pro', monospace;
+            background: #000;
+            color: #00ff00;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.2;
+        }
+        
+        .terminal {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #000;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .terminal-header {
+            background: #00ff00;
+            color: #000;
+            padding: 10px 20px;
+            font-weight: 600;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .terminal-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #000;
+        }
+        
+        .terminal-body {
+            padding: 20px;
+        }
+        
+        .ascii-display {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #00ff00;
+            padding: 30px;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            white-space: pre;
+            font-family: 'Source Code Pro', monospace;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .control-section {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.02);
+        }
+        
+        .control-section h3 {
+            color: #00ff00;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 5px;
+        }
+        
+        .option-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .option-btn {
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .option-btn.active {
+            background: #00ff00;
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            background: #000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: 'Source Code Pro', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+            transform: translateY(-2px);
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .terminal-prompt {
+            color: #00ff00;
+            margin-bottom: 20px;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #00ff00;
+            text-align: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="terminal-header">
+            <span>ASCII NFT GENERATOR v2.0 - TERMINAL MODE</span>
+            <div class="terminal-controls">
+                <div class="control-btn"></div>
+                <div class="control-btn"></div>
+                <div class="control-btn"></div>
+            </div>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="terminal-prompt">
+                root@ascii-gen:~$ ./generate_nft.sh<span class="blink">_</span>
+            </div>
+            
+            <div class="ascii-display" id="asciiDisplay"></div>
+            
+            <div class="controls-grid">
+                <div class="control-section">
+                    <h3>👑 Hats</h3>
+                    <div class="option-buttons" id="hatButtons"></div>
+                </div>
+                
+                <div class="control-section">
+                    <h3>👓 Glasses</h3>
+                    <div class="option-buttons" id="glassesButtons"></div>
+                </div>
+                
+                <div class="control-section">
+                    <h3>👀 Eyes</h3>
+                    <div class="option-buttons" id="eyesButtons"></div>
+                </div>
+                
+                <div class="control-section">
+                    <h3>😊 Mouth</h3>
+                    <div class="option-buttons" id="mouthButtons"></div>
+                </div>
+                
+                <div class="control-section">
+                    <h3>👔 Body</h3>
+                    <div class="option-buttons" id="bodyButtons"></div>
+                </div>
+                
+                <div class="control-section">
+                    <h3>🎨 Accessories</h3>
+                    <div class="option-buttons" id="accessoryButtons"></div>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="action-btn" onclick="randomize()">🎲 Randomize</button>
+                <button class="action-btn" onclick="copyToClipboard()">📋 Copy ASCII</button>
+                <button class="action-btn" onclick="saveAsImage()">💾 Save Image</button>
+                <button class="action-btn" onclick="reset()">🔄 Reset</button>
+            </div>
+            
+            <div class="status" id="status">
+                System ready. Select options to generate your ASCII NFT.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const parts = {
+            hats: [
+                { name: 'None', ascii: '' },
+                { name: 'Cap', ascii: '    ___    \n   /   \\   \n  |  ^  |  ' },
+                { name: 'Crown', ascii: '  /\\_/\\_/\\  \n |  ***  | \n  \\     /  ' },
+                { name: 'Top Hat', ascii: '   [===]   \n   |   |   \n   |___|   ' },
+                { name: 'Beanie', ascii: '  ~~~~~~~  \n /~~~~~~~\\ \n |       | ' },
+                { name: 'Helmet', ascii: '  <<<>>>  \n <||||||| \n  \\     / ' },
+                { name: 'Cowboy', ascii: ' ~~~~~~~~~ \n |  \\   /  |\n  \\  \\_/  /' },
+                { name: 'Chef', ascii: '   _____   \n  |_____| \n  |     |  ' },
+                { name: 'Beret', ascii: '    ___   \n   /   \\  \n  (  o  ) ' },
+                { name: 'Viking', ascii: '  |\\   /| \n  | \\V/ | \n   \\___/  ' },
+                { name: 'Wizard', ascii: '     *    \n    /|\\   \n   / | \\  ' },
+                { name: 'Spike', ascii: '  /\\/\\/\\  \n |  ^^^  |\n  \\     / ' }
+            ],
+            
+            glasses: [
+                { name: 'None', ascii: '' },
+                { name: 'Round', ascii: ' [o-o]' },
+                { name: 'Square', ascii: ' |-o-|' },
+                { name: 'Sunglasses', ascii: ' \\o_o/' },
+                { name: 'Fancy', ascii: ' {o=o}' },
+                { name: 'Monocle', ascii: ' (o) o' },
+                { name: '3D', ascii: ' ]o-o[' },
+                { name: 'Safety', ascii: ' |oOo|' },
+                { name: 'Star', ascii: ' *o-o*' },
+                { name: 'Heart', ascii: ' ♥o-o♥' },
+                { name: 'Cat Eye', ascii: ' /o\\o\\' },
+                { name: 'Cyber', ascii: ' <o=o>' }
+            ],
+            
+            eyes: [
+                { name: 'Round', ascii: ' o   o ' },
+                { name: 'Happy', ascii: ' ^   ^ ' },
+                { name: 'Sleepy', ascii: ' -   - ' },
+                { name: 'Starry', ascii: ' *   * ' },
+                { name: 'Dizzy', ascii: ' @   @ ' },
+                { name: 'Wink', ascii: ' >   < ' },
+                { name: 'Dead', ascii: ' x   x ' },
+                { name: 'Dollar', ascii: ' $   $ ' },
+                { name: 'Hearts', ascii: ' ♥   ♥ ' },
+                { name: 'Dots', ascii: ' •   • ' },
+                { name: 'Lines', ascii: ' |   | ' },
+                { name: 'Squares', ascii: ' ■   ■ ' },
+                { name: 'Angry', ascii: ' >   < ' },
+                { name: 'Spiral', ascii: ' @   @ ' },
+                { name: 'Plus', ascii: ' +   + ' }
+            ],
+            
+            mouth: [
+                { name: 'Smile', ascii: '  \\_/' },
+                { name: 'Frown', ascii: '  /‾\\' },
+                { name: 'Surprised', ascii: '   o  ' },
+                { name: 'Wavy', ascii: '   ~  ' },
+                { name: 'Big Smile', ascii: '   D  ' },
+                { name: 'Kiss', ascii: '   3  ' },
+                { name: 'Tongue', ascii: '  :P  ' },
+                { name: 'Vampire', ascii: ' v_v ' },
+                { name: 'Mustache', ascii: ' {o} ' },
+                { name: 'Beard', ascii: ' /‾\\ ' },
+                { name: 'Pipe', ascii: ' -o- ' },
+                { name: 'Straight', ascii: '  ---  ' },
+                { name: 'Grumpy', ascii: '  \\_\\  ' },
+                { name: 'Laughing', ascii: ' \\o/ ' }
+            ],
+            
+            body: [
+                { name: 'Basic', ascii: '   |   \n  /|\\  \n   |   ' },
+                { name: 'Suit', ascii: '  /|\\ \n [###] \n  | |  ' },
+                { name: 'T-Shirt', ascii: '  /|\\ \n |TTT| \n  | |  ' },
+                { name: 'Hoodie', ascii: '  /|\\ \n |HHH| \n  |_|  ' },
+                { name: 'Tank Top', ascii: '   |   \n |***| \n  | |  ' },
+                { name: 'Dress', ascii: '  /|\\ \n |DDD| \n /___\\ ' },
+                { name: 'Armor', ascii: '  /|\\ \n [AAAa \n  |_|  ' },
+                { name: 'Cape', ascii: ' \\\\|// \n  \\|/  \n   |   ' },
+                { name: 'Overalls', ascii: '  /|\\ \n |OOO| \n  |_|  ' },
+                { name: 'Tuxedo', ascii: '  /|\\ \n |@@@| \n  |_|  ' }
+            ],
+            
+            accessories: [
+                { name: 'None', ascii: '' },
+                { name: 'Bowtie', ascii: '<@>' },
+                { name: 'Necklace', ascii: 'ooo' },
+                { name: 'Scarf', ascii: '~~~' },
+                { name: 'Badge', ascii: '[*]' },
+                { name: 'Chain', ascii: '°°°' },
+                { name: 'Medal', ascii: '(*)' },
+                { name: 'Flower', ascii: '@@@' },
+                { name: 'Pin', ascii: '• ' },
+                { name: 'Collar', ascii: '===' }
+            ]
+        };
+        
+        let currentSelection = {
+            hats: 0,
+            glasses: 0,
+            eyes: 0,
+            mouth: 0,
+            body: 0,
+            accessories: 0
+        };
+        
+        function initializeButtons() {
+            Object.keys(parts).forEach(category => {
+                const container = document.getElementById(category + 'Buttons');
+                parts[category].forEach((item, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn';
+                    button.textContent = item.name;
+                    button.onclick = () => selectOption(category, index);
+                    if (index === 0) button.classList.add('active');
+                    container.appendChild(button);
+                });
+            });
+        }
+        
+        function selectOption(category, index) {
+            currentSelection[category] = index;
+            
+            // Update active button
+            const buttons = document.querySelectorAll(`#${category}Buttons .option-btn`);
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            generateASCII();
+            updateStatus(`Selected ${parts[category][index].name} for ${category}`);
+        }
+        
+        function generateASCII() {
+            let ascii = '';
+            
+            // Hat (top)
+            if (currentSelection.hats > 0) {
+                ascii += parts.hats[currentSelection.hats].ascii + '\n';
+            }
+            
+            // Glasses line
+            if (currentSelection.glasses > 0) {
+                ascii += parts.glasses[currentSelection.glasses].ascii + '\n';
+            }
+            
+            // Eyes line
+            ascii += parts.eyes[currentSelection.eyes].ascii + '\n';
+            
+            // Mouth line
+            ascii += parts.mouth[currentSelection.mouth].ascii + '\n';
+            
+            // Accessories line (if applicable)
+            if (currentSelection.accessories > 0) {
+                ascii += '   ' + parts.accessories[currentSelection.accessories].ascii + '\n';
+            }
+            
+            // Body
+            ascii += parts.body[currentSelection.body].ascii + '\n';
+            
+            // Add some flair
+            ascii += '\n╔══════════════╗\n║  ASCII  NFT  ║\n╚══════════════╝';
+            
+            document.getElementById('asciiDisplay').textContent = ascii;
+        }
+        
+        function randomize() {
+            Object.keys(parts).forEach(category => {
+                const randomIndex = Math.floor(Math.random() * parts[category].length);
+                selectOption(category, randomIndex);
+            });
+            updateStatus('Randomized! Your new ASCII NFT is ready.');
+        }
+        
+        function copyToClipboard() {
+            const ascii = document.getElementById('asciiDisplay').textContent;
+            navigator.clipboard.writeText(ascii).then(() => {
+                updateStatus('ASCII copied to clipboard!');
+            }).catch(() => {
+                updateStatus('Failed to copy to clipboard.');
+            });
+        }
+        
+        function saveAsImage() {
+            const ascii = document.getElementById('asciiDisplay').textContent;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ff00';
+            ctx.font = '16px Source Code Pro, monospace';
+            
+            const lines = ascii.split('\n');
+            lines.forEach((line, index) => {
+                ctx.fillText(line, 50, 50 + (index * 20));
+            });
+            
+            const link = document.createElement('a');
+            link.download = 'ascii-nft.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            
+            updateStatus('ASCII NFT saved as image!');
+        }
+        
+        function reset() {
+            Object.keys(currentSelection).forEach(category => {
+                selectOption(category, 0);
+            });
+            updateStatus('Reset complete. Ready for new creation.');
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+        
+        // Initialize the generator
+        initializeButtons();
+        generateASCII();
+        updateStatus('ASCII NFT Generator loaded. Ready to create!');
+    </script>
+</body>
+</html>
